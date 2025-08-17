@@ -1,0 +1,5 @@
+{
+  "print_pre_post_rerank": true,
+  "print_step_verifier_label": true,
+  "print_citations": true
+}
