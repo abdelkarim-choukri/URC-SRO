@@ -1,0 +1,14 @@
+# light deps from earlier steps
+pydantic==2.11.1
+pydantic-settings==2.10.1
+typing-extensions==4.14.1
+tiktoken==0.11.0
+
+# GPU-ready RAG slice
+torch==2.3.1
+transformers==4.43.3
+accelerate==0.33.0
+safetensors==0.4.3
+huggingface-hub==0.24.6
+sentence-transformers==3.0.1
+faiss-cpu==1.8.0.post1
