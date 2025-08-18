@@ -12,3 +12,7 @@ safetensors==0.4.3
 huggingface-hub==0.24.6
 sentence-transformers==3.0.1
 faiss-cpu==1.8.0.post1
+
+ragas==0.1.21
+datasets==2.20.0
+pandas==2.2.2

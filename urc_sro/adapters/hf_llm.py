@@ -80,3 +80,47 @@ class HFGenerativeLLM(LLM):
 
     def self_refine_answer(self, answer: str, feedback: str) -> str:
         return f"{answer} [Refined: {feedback}]"
+
+
+# ------------------------------
+# Minimal dependency-free mock LLM for tests / mock pipeline
+# ------------------------------
+from typing import List, Tuple, Optional
+from ..types import Document
+from ..llm_interfaces import LLM
+
+class TrivialLLM(LLM):
+    """
+    A tiny, no-deps LLM adapter for fast orchestration tests.
+    Produces a short draft from context snippets and simple steps.
+    """
+
+    def generate(self, prompt: str, system: Optional[str] = None) -> str:
+        pre = f"{system.strip()} " if system else ""
+        return (pre + prompt.strip()).strip()
+
+    def generate_answer_with_steps(self, query: str, context: List[Document]) -> Tuple[str, List[str]]:
+        src_ids = [d.id for d in context[:3]]
+        snippet = " ".join(_first_sentence(d.text) for d in context[:2]).strip()
+        steps = [
+            "Identify relevant passages from retrieved context.",
+            "Synthesize a concise answer grounded in cited passages."
+        ]
+        answer = (
+            f"Based on sources {src_ids}, here is a concise answer to your query: {query.strip()}. "
+            f"{snippet or 'No detailed evidence snippets available.'}"
+        ).strip()
+        return answer, steps
+
+    def generate_next_step(self, query: str, context: List[Document], prior_steps: List[str]) -> str:
+        return "Validate that each statement is supported by at least one retrieved passage."
+
+    def self_refine_step(self, step: str, feedback: str) -> str:
+        return f"{step} (refined: {feedback})"
+
+    def self_refine_answer(self, answer: str, feedback: str) -> str:
+        return (answer + f" [Refined: {feedback}]").strip()
+
+def _first_sentence(text: str) -> str:
+    s = text.strip().split(".")
+    return (s[0] + ".") if s and s[0] else ""
